@@ -1,10 +1,19 @@
-// get all products
+
 const Product = require('../models/product')
 const ErrorHandler = require('../utils/errorHandler')
 const catchAsyncErrors = require('../middlewares/catchAsyncErrors')
+const APIFeatures = require('../utils/apiFeatures')
 
+
+// get all products
 exports.getProducts = async (req,res,next) => {
-    const products = await Product.find()
+
+    const resPerPage = 4;
+    const productCount = await Product.countDocuments()
+
+    const apiFeatures = new APIFeatures(Product.find(),req.query).search().filter().pagination(resPerPage)
+
+    const products = await apiFeatures.query;
     res.json({
         success: true,
         products,
